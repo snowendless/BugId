@@ -1,4 +1,11 @@
 @ECHO OFF
+
+SET phstartPath=%0
+FOR %%i IN (%phstartPath%) DO (
+SET phstartDrive=%%~di
+SET phstartDir=%%~dpi
+)
+
 SETLOCAL
 NET SESSION >nul 2>&1
 IF ERRORLEVEL 1 (
@@ -6,17 +13,12 @@ IF ERRORLEVEL 1 (
   EXIT /B 1
 )
 IF NOT DEFINED GFlags (
-  CALL :SET_GFLAGS_%PROCESSOR_ARCHITECTURE%
-  IF NOT DEFINED GFlags (
-    ECHO - Cannot find gflags.exe, please set the "GFlags" environment variable to the correct path.
-    EXIT /B 1
-  )
+  set GFlags=%phstartDir%modules\WinDbg-x86\gflags.exe
 ) ELSE (
   SET GFlags="%GFlags:"=%"
 )
 IF NOT EXIST %GFlags% (
-  ECHO - Cannot find gflags.exe at %GFlags%, please set the "GFlags" environment variable to the correct path.
-  EXIT /B 1
+  set GFlags=%phstartDir%modules\WinDbg-x86\gflags.exe
 )
 
 IF "%~1" == "" (
